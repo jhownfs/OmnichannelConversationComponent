@@ -1,0 +1,15 @@
+<template>
+    <div class="c-container">
+      <div class="button-menu slds-align_absolute-center">
+        <lightning-button variant="brand" label="Responder" title="Responder" onclick={sendResponseToConversation} class="slds-m-left_x-small"></lightning-button>
+      </div>
+      <div class="">
+        <lightning-datatable
+          key-field="Id"
+          data={conversationList}
+          columns={columns}
+          onrowselection={handleRowSelection}
+          wrap-table-header></lightning-datatable>
+      </div>
+    </div>
+</template>
