@@ -16,13 +16,12 @@ public without sharing class ConversationController {
     public static string createPendingServiceRouting(list<MessagingSession> lstConversatios){
         String msg;
         try {
-            system.debug('lstConversatios = ' + lstConversatios);
             List<PendingServiceRouting> lstPSD = new List<PendingServiceRouting>();
             for(MessagingSession conversation: lstConversatios){
                 PendingServiceRouting psrObj = new PendingServiceRouting();
                 psrObj.CapacityWeight = 1;
                 psrObj.IsReadyForRouting = true;
-                psrObj.ServiceChannelId = '0N94W0000011YQj';
+                psrObj.ServiceChannelId = ServicePresenceStatusSelector.getPresenceByCurrentUserId().ServicePresenceStatusId;
                 psrObj.WorkItemId = conversation.Id;
                 psrObj.RoutingType = 'SkillsBased';
                 psrObj.RoutingPriority = 1;
