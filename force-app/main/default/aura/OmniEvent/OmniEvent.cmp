@@ -1,5 +1,6 @@
 <aura:component implements="flexipage:availableForAllPageTypes" access="global" >
     <lightning:omniToolkitAPI aura:id="omniToolkit" />  
     <aura:handler event="lightning:omniChannelWorkAccepted" action="{! c.onWorkAccepted }"/>
+    <aura:handler event="lightning:omniChannelLogout" action="{! c.onLougout }"/>
     <c:myConversation aura:id="myConversation"></c:myConversation>
 </aura:component>

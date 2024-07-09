@@ -21,7 +21,7 @@ public without sharing class ConversationController {
                 PendingServiceRouting psrObj = new PendingServiceRouting();
                 psrObj.CapacityWeight = 1;
                 psrObj.IsReadyForRouting = true;
-                psrObj.ServiceChannelId = ServicePresenceStatusSelector.getPresenceByCurrentUserId().ServicePresenceStatusId;
+                psrObj.ServiceChannelId = ServicePresenceStatusSelector.getPresenceByCurrentUserId().ServiceChannelId;
                 psrObj.WorkItemId = conversation.Id;
                 psrObj.RoutingType = 'SkillsBased';
                 psrObj.RoutingPriority = 1;

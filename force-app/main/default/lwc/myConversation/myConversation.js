@@ -74,13 +74,31 @@ conversations( { data, error}){
 
 
  @api handleWorkAccepted(workItemId){
-    console.log('conversationList = ', JSON.stringify(this.conversationList));
     this.conversationList = this.conversationList.filter((element) => {
       if(element.Id.search(workItemId) === -1){
         return element;
       }
     });
+  }
 
-    console.log('conversationList = ', JSON.stringify(this.conversationList));
+  @api handleLogout(){
+    getConversationsByUser()
+    .then(result => {  
+        this.conversationList = result.map(element => Object.assign({
+              "Id": element.Id,
+              "LeadName": (element.Lead === undefined) ? '' : element.Lead.FirstName + ' ' +  element.Lead.LastName,
+              "ContactName": (element.EndUserContact === undefined) ? '' : element.EndUserContact.FirstName + ' ' + element.EndUserContact.LastName,
+              "AccountName": (element.EndUserAccount === undefined) ? '' : element.EndUserAccount.Name,
+              "Status": element.Status
+            })
+          )
+        }).catch(error => {
+            console.log('error: ' + JSON.stringify(error));
+        });      
+  }
+
+  handleRefreshValues(){
+    this.this.conversationList = [];
+    this.handleLogout();
   }
 }

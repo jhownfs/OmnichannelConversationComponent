@@ -8,4 +8,8 @@
         component.find('myConversation').handleWorkAccepted(workItemId);
 
     }, 
+
+    onLougout : function(component, event, helper) {
+        component.find('myConversation').handleLogout();
+    }
 })
