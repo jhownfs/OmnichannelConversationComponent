@@ -2,35 +2,32 @@ public without sharing class ConversationController {
    
     @AuraEnabled(cacheable=true)
     public static list<MessagingSession> getConversationsByUser(){
-        List<MessagingSession> lstConversationsByUser = new List<MessagingSession>();
+        List<MessagingSession> ConversationsByUser = new List<MessagingSession>();
         try {
-            lstConversationsByUser = MessaginSessionSelector.getMessagingByUserIdAndWaitingStatus();
+            ConversationsByUser = MessaginSessionSelector.getMessagingByUserIdAndWaitingStatus();
+            system.debug('ConversationsByUser = ' + ConversationsByUser);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
 
-        return lstConversationsByUser;
+        return ConversationsByUser;
     }
 
     @AuraEnabled
-    public static string createPendingServiceRouting(list<MessagingSession> lstConversatios){
+    public static String createPendingServiceRouting(list<MessagingSession> Conversations){
+
         String msg;
+
         try {
-            List<PendingServiceRouting> lstPSD = new List<PendingServiceRouting>();
-            for(MessagingSession conversation: lstConversatios){
-                PendingServiceRouting psrObj = new PendingServiceRouting();
-                psrObj.CapacityWeight = 1;
-                psrObj.IsReadyForRouting = true;
-                psrObj.ServiceChannelId = ServicePresenceStatusSelector.getPresenceByCurrentUserId().ServiceChannelId;
-                psrObj.WorkItemId = conversation.Id;
-                psrObj.RoutingType = 'SkillsBased';
-                psrObj.RoutingPriority = 1;
-                psrObj.PreferredUserId = UserInfo.getUserId();
-                psrObj.IsPreferredUserRequired = true;
-                lstPSD.add(psrObj);
+
+            if(!UserPresenceHelp.canIcreatePendingServiceToUser()){
+                throw new UsarPresenceException('User is offline, cannot receive workitem');
             }
 
-            Database.SaveResult[] result = Database.insert(lstPSD, false);
+            PendingServiceFactory.createPendingServinceRoutingforCurrentUser(Conversations);
+            List<PendingServiceRouting> PendingServices = PendingServiceFactory.getPendingServinceRouting();
+
+            Database.SaveResult[] result = Database.insert(PendingServices, false);
    
             for(Database.SaveResult resultObj : result){
                 if(!resultObj.isSuccess()){

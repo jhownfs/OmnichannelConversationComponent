@@ -26,7 +26,6 @@ conversations( { data, error}){
             "Status": element.Status
           })
         );
-        console.log('conversationObj = ', this.conversationList);
         
     }
     if(error){
@@ -35,7 +34,7 @@ conversations( { data, error}){
   }
 
   sendResponseToConversation(){
-    createPendingServiceRouting({lstConversatios : this.selectedData})
+    createPendingServiceRouting({Conversations : this.selectedData})
     .then(result => {
         console.log('result: ' + JSON.stringify(result));
     }).catch(error => {
