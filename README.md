@@ -26,7 +26,9 @@ This component help with that, allow agent see they conversation in waiting and 
 ## Next Updates 🚀
 
 [] Improve Design Pattern
+
 [] Add how this component works
+
 [] Allow more workitem types
 
 ## Find some bug or want to help, please open a PR 🚩
