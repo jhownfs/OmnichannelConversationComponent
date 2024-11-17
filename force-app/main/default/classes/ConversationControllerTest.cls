@@ -63,5 +63,4 @@ private class ConversationControllerTest {
     
     return session;
     }
-
   }  
