@@ -1,12 +1,20 @@
 {
   "packageDirectories": [
     {
+      "versionName": "Conversation Omni Pack",
+      "versionNumber": "0.1.0.NEXT",
       "path": "force-app",
-      "default": true
+      "default": true,
+      "package": "ConvesationsPack",
+      "versionDescription": ""
     }
   ],
   "name": "MyConvesations",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "61.0"
+  "sourceApiVersion": "61.0",
+  "packageAliases": {
+    "ConvesationsPack": "0Ho4W0000010wa6SAA",
+    "ConvesationsPack@0.1.0-1": "04t4W000002rEtqQAE"
+  }
 }
