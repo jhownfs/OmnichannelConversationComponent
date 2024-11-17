@@ -3,26 +3,21 @@ public with sharing class UserFixureFactory {
 
     public static User createTestUser() {
         
-        List<User> Users = [SELECT Id FROM User WHERE Email = 'jdoe@example.com' limit 1];
-        
-        if(Users == null || Users.isEmpty()){
-            Users = new List<User>();
-            User user = new User();
+      String uniqueUsername = 'testuser' + System.currentTimeMillis() + '@example.com';
 
-            user.FirstName = 'John';
-            user.LastName = 'Doe';
-            user.Alias = 'jdoe';
-            user.Email = 'jdoe@example.com';
-            user.Username = 'jdoe@example.com';
-            user.ProfileId = [SELECT Id FROM Profile WHERE Name = 'System Administrator'].Id;
-            user.UserRoleId = [SELECT Id FROM UserRole WHERE Name = 'CEO'].Id;
-            user.EmailEncodingKey = 'UTF-8';
-            user.LanguageLocaleKey = 'en_US';
-            user.LocaleSidKey = 'en_US';
-            user.TimeZoneSidKey = 'America/Los_Angeles';
-
-            Users.add(user);
-        }  
-        return Users[0];
+      User u = new User(
+          FirstName = 'Test',
+          LastName = 'User',
+          Alias = 'tuser',
+          Email = 'test@example.com',
+          Username = uniqueUsername,
+          ProfileId = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1].Id,
+          TimeZoneSidKey = 'America/Los_Angeles',
+          LocaleSidKey = 'en_US',
+          EmailEncodingKey = 'UTF-8',
+          LanguageLocaleKey = 'en_US'
+      );
+      insert u;
+      return u;
     } 
 }
