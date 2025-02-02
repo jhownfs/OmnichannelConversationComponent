@@ -17,6 +17,7 @@ public with sharing class UserFixureFactory {
           EmailEncodingKey = 'UTF-8',
           LanguageLocaleKey = 'en_US'
       );
+
       insert u;
       return u;
     } 

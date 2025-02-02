@@ -20,7 +20,7 @@ public without sharing class ConversationController {
 
         try {
 
-            if(!UserPresenceHelp.canIcreatePendingServiceToUser()){
+            if(!UserPresenceHelper.canIcreatePendingServiceToUser()){
                 throw new UsarPresenceException('User is offline, cannot receive workitem');
             }
 
