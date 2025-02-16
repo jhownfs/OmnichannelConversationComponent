@@ -1,4 +1,4 @@
-import { LightningElement, wire, api, track } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 import getConversationsByUser from '@salesforce/apex/ConversationController.getConversationsByUser';
 import createPendingServiceRouting from '@salesforce/apex/ConversationController.createPendingServiceRouting'
 import successMsg from '@salesforce/label/c.save_success_msg'
