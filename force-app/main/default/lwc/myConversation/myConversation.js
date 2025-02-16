@@ -19,24 +19,30 @@ export default class MyConversation extends LightningElement {
 columns = columns;
 @track showSpinner = false;
 selectedData = [];
-@wire(getConversationsByUser)
-conversations({ data, error}){
-    if(data){
 
-      this.conversationList = data.map(element => Object.assign({
-            "Id": element.Id,
-            "LeadName": (element.Lead === undefined) ? '' : element.Lead.FirstName + ' ' +  element.Lead.LastName,
-            "ContactName": (element.EndUserContact === undefined) ? '' : element.EndUserContact.FirstName + ' ' + element.EndUserContact.LastName,
-            "AccountName": (element.EndUserAccount === undefined) ? '' : element.EndUserAccount.Name,
-            "Status": element.Status
-          })
-        );
-        
+connectedCallback(){
+  this.showSpinner = true;
+  this.getConversations();
+}
+
+async getConversations(){
+  try {
+    const response = await getConversationsByUser();
+    this.conversationList = response.map(element => Object.assign({
+          "Id": element.Id,
+          "LeadName": (element.Lead === undefined) ? '' : element.Lead.FirstName + ' ' +  element.Lead.LastName,
+          "ContactName": (element.EndUserContact === undefined) ? '' : element.EndUserContact.FirstName + ' ' + element.EndUserContact.LastName,
+          "AccountName": (element.EndUserAccount === undefined) ? '' : element.EndUserAccount.Name,
+          "Status": element.Status
+        })
+      )
+    if(response){
+      this.showSpinner = false;
     }
-    if(error){
-        console.log('error: ' + JSON.stringify(error));
-    }
+  } catch (error) {
+    this.handleMsg('Error', errorMsg, 'error');
   }
+}
 
   async sendResponseToConversation(){
     try {
@@ -84,25 +90,8 @@ conversations({ data, error}){
   }
 
   @api async handleLogout(){
-    try {
-      const response = await getConversationsByUser();
-      this.conversationList = response.map(element => Object.assign({
-            "Id": element.Id,
-            "LeadName": (element.Lead === undefined) ? '' : element.Lead.FirstName + ' ' +  element.Lead.LastName,
-            "ContactName": (element.EndUserContact === undefined) ? '' : element.EndUserContact.FirstName + ' ' + element.EndUserContact.LastName,
-            "AccountName": (element.EndUserAccount === undefined) ? '' : element.EndUserAccount.Name,
-            "Status": element.Status
-          })
-      )
-      console.log('response: ' + JSON.stringify(response));
-      if(response){
-        this.showSpinner = false;
-        this.handleMsg('Success', refreshMsg, 'success');
-      }
-    } 
-    catch (error) {
-      this.handleMsg('Error', errorMsg, 'error');
-    }
+    this.getConversations();
+    this.handleMsg('Success', refreshMsg, 'success');
   }
 
   handleRefreshValues(){
