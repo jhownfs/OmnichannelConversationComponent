@@ -1,9 +1,10 @@
 import { LightningElement, wire, api, track } from 'lwc';
 import getConversationsByUser from '@salesforce/apex/ConversationController.getConversationsByUser';
 import createPendingServiceRouting from '@salesforce/apex/ConversationController.createPendingServiceRouting'
-import successMsg from '@salesforce/label/save_success_msg'
-import errorMsg from '@salesforce/label/error_success_msg'
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import successMsg from '@salesforce/label/c.save_success_msg'
+import errorMsg from '@salesforce/label/c.error_success_msg'
+import refreshMsg from '@salesforce/label/c.refresh_msg'
+import { ShowToastEvent } from 'lightning/platformShowToastEvent'
 
 const columns = [
   { label: 'Lead', fieldName: 'LeadName', type: 'text' },
@@ -16,9 +17,10 @@ export default class MyConversation extends LightningElement {
 
 @track conversationList = [];
 columns = columns;
+@track showSpinner = false;
 selectedData = [];
 @wire(getConversationsByUser)
-conversations( { data, error}){
+conversations({ data, error}){
     if(data){
 
       this.conversationList = data.map(element => Object.assign({
@@ -92,8 +94,10 @@ conversations( { data, error}){
             "Status": element.Status
           })
       )
+      console.log('response: ' + JSON.stringify(response));
       if(response){
-        this.handleMsg('Success', successMsg, 'success');
+        this.showSpinner = false;
+        this.handleMsg('Success', refreshMsg, 'success');
       }
     } 
     catch (error) {
@@ -102,15 +106,16 @@ conversations( { data, error}){
   }
 
   handleRefreshValues(){
-    this.this.conversationList = [];
+    this.showSpinner = true;
+    this.conversationList = [];
     this.handleLogout();
   }
 
   handleMsg(title, message, variant) {
     const evt = new ShowToastEvent({
-        title: title,//'Success',
+        title: title,
         message: message,
-        variant: variant//'success',
+        variant: variant,
     });
     this.dispatchEvent(evt);
   }

@@ -14,5 +14,10 @@
           onrowselection={handleRowSelection}
           wrap-table-header></lightning-datatable>
       </div>
+      <template if:true={showSpinner}>
+        <div class="exampleHolder">
+          <lightning-spinner alternative-text="Loading" size="x-small"></lightning-spinner>
+        </div>
+      </template>
     </div>
 </template>
