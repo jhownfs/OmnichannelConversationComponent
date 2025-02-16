@@ -1,6 +1,9 @@
 import { LightningElement, wire, api, track } from 'lwc';
 import getConversationsByUser from '@salesforce/apex/ConversationController.getConversationsByUser';
 import createPendingServiceRouting from '@salesforce/apex/ConversationController.createPendingServiceRouting'
+import successMsg from '@salesforce/label/save_success_msg'
+import errorMsg from '@salesforce/label/error_success_msg'
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 const columns = [
   { label: 'Lead', fieldName: 'LeadName', type: 'text' },
@@ -33,20 +36,21 @@ conversations( { data, error}){
     }
   }
 
-  sendResponseToConversation(){
-    createPendingServiceRouting({Conversations : this.selectedData})
-    .then(result => {
-        console.log('result: ' + JSON.stringify(result));
-    }).catch(error => {
-        console.log('error: ' + JSON.stringify(error));
-    });
+  async sendResponseToConversation(){
+    try {
+    const result = await createPendingServiceRouting({Conversations : this.selectedData});
+    if(result){
+      this.handleMsg('Success', successMsg, 'success');
+    } 
+   } catch (error) {
+    this.handleMsg('Error', errorMsg, 'error');
+   }
   }
 
   handleRowSelection(event){
     switch (event.detail.config.action) {
       case 'selectAllRows':
         for (let i = 0; i < event.detail.selectedRows.length; i++) {
-          console.log('event.detail.selectedRows[i] = ', event.detail.selectedRows[i]);
           this.selectedData.push(event.detail.selectedRows[i]);
         }
         break;
@@ -54,10 +58,7 @@ conversations( { data, error}){
         this.selectedData = [];
         break;
       case 'rowSelect':
-        
         event.detail.selectedRows.forEach((selectedRow) => {
-          console.log('selectedRow = ', selectedRow);
-
           this.selectedData.push(selectedRow);
         });
         break;
@@ -80,24 +81,37 @@ conversations( { data, error}){
     });
   }
 
-  @api handleLogout(){
-    getConversationsByUser()
-    .then(result => {  
-        this.conversationList = result.map(element => Object.assign({
-              "Id": element.Id,
-              "LeadName": (element.Lead === undefined) ? '' : element.Lead.FirstName + ' ' +  element.Lead.LastName,
-              "ContactName": (element.EndUserContact === undefined) ? '' : element.EndUserContact.FirstName + ' ' + element.EndUserContact.LastName,
-              "AccountName": (element.EndUserAccount === undefined) ? '' : element.EndUserAccount.Name,
-              "Status": element.Status
-            })
-          )
-        }).catch(error => {
-            console.log('error: ' + JSON.stringify(error));
-        });      
+  @api async handleLogout(){
+    try {
+      const response = await getConversationsByUser();
+      this.conversationList = response.map(element => Object.assign({
+            "Id": element.Id,
+            "LeadName": (element.Lead === undefined) ? '' : element.Lead.FirstName + ' ' +  element.Lead.LastName,
+            "ContactName": (element.EndUserContact === undefined) ? '' : element.EndUserContact.FirstName + ' ' + element.EndUserContact.LastName,
+            "AccountName": (element.EndUserAccount === undefined) ? '' : element.EndUserAccount.Name,
+            "Status": element.Status
+          })
+      )
+      if(response){
+        this.handleMsg('Success', successMsg, 'success');
+      }
+    } 
+    catch (error) {
+      this.handleMsg('Error', errorMsg, 'error');
+    }
   }
 
   handleRefreshValues(){
     this.this.conversationList = [];
     this.handleLogout();
+  }
+
+  handleMsg(title, message, variant) {
+    const evt = new ShowToastEvent({
+        title: title,//'Success',
+        message: message,
+        variant: variant//'success',
+    });
+    this.dispatchEvent(evt);
   }
 }

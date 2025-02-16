@@ -5,7 +5,6 @@ public without sharing class ConversationController {
         List<MessagingSession> ConversationsByUser = new List<MessagingSession>();
         try {
             ConversationsByUser = MessaginSessionSelector.getMessagingByUserIdAndWaitingStatus();
-            system.debug('ConversationsByUser = ' + ConversationsByUser);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -14,9 +13,9 @@ public without sharing class ConversationController {
     }
 
     @AuraEnabled
-    public static String createPendingServiceRouting(list<MessagingSession> Conversations){
+    public static boolean createPendingServiceRouting(list<MessagingSession> Conversations){
 
-        String msg;
+        boolean saved;
 
         try {
 
@@ -38,13 +37,13 @@ public without sharing class ConversationController {
                     }
                 }
             }
-            msg = 'sucesso';
+            saved = true;
 
         } catch (Exception e) {
-            msg = e.getMessage();
+            saved = false;
             throw new AuraHandledException(e.getMessage());
         }
 
-        return msg;
+        return saved;
     }
 }
